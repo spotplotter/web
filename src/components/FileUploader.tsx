@@ -43,7 +43,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete, onImageUp
 
     try {
       const response = await axios.post<InferenceResponse>(
-        "http://inference.spotplotter.com:8000/api/v1/predict",
+        "https://inference.spotplotter.com:8000/api/v1/predict",
         formData,
         {
           headers: {
