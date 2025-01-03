@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -10,12 +10,8 @@ COPY . .
 
 RUN yarn build
 
-FROM nginx:alpine
+RUN yarn global add serve
 
-COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
 
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80 443
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", "build", "-l", "80"]
