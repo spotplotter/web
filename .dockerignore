@@ -1,0 +1,10 @@
+# Ignore everything
+**
+
+!Dockerfile
+!src
+!public
+!package.json
+!yarn.lock
+!tsconfig.json
+!serve.json
