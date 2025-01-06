@@ -4,8 +4,10 @@ import { Container, CssBaseline, Typography } from "@mui/material";
 
 import Navbar from "./components/NavBar";
 import FileUploader from "./components/FileUploader";
+import Login from "./pages/Login";
 import ResultsDisplay from "./components/ResultsDisplay";
 import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
 import { InferenceResponse } from "./types";
 
 const App: React.FC = () => {
@@ -36,8 +38,10 @@ const App: React.FC = () => {
           }
         />
 
-        {/* Registration Page */}
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
       </Routes>
     </Router>
   );

@@ -12,49 +12,45 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-// Validation schema using Zod
-const registerSchema = z.object({
-  full_name: z.string().min(3, "Full name must be at least 3 characters"),
+// Validation schema
+const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
 
-const Register: React.FC = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: RegisterFormValues) => {
-    setError(null);
-    setSuccess(null);
+  const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/user/register", {
+      const response = await fetch("http://localhost:8000/api/v1/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        credentials: "include", // Include cookies for JWT
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
-        throw new Error(result.detail || "Registration failed");
+        const result = await response.json();
+        throw new Error(result.detail || "Login failed");
       }
 
-      setSuccess("Registration successful! Check your email for verification.");
-      setTimeout(() => navigate("/login"), 3000); // Redirect after 3 sec
+      navigate("/dashboard"); // Redirect to dashboard on success
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred.");
     } finally {
@@ -65,22 +61,12 @@ const Register: React.FC = () => {
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, textAlign: "center" }}>
-        <Typography variant="h4">Register</Typography>
+        <Typography variant="h4">Login</Typography>
       </Box>
 
       {error && <Typography color="error">{error}</Typography>}
-      {success && <Typography color="primary">{success}</Typography>}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2 }}>
-        <TextField
-          fullWidth
-          label="Full Name"
-          {...register("full_name")}
-          error={!!errors.full_name}
-          helperText={errors.full_name?.message}
-          margin="normal"
-        />
-
         <TextField
           fullWidth
           label="Email"
@@ -109,20 +95,11 @@ const Register: React.FC = () => {
           disabled={loading}
           sx={{ mt: 2 }}
         >
-          {loading ? <CircularProgress size={24} /> : "Register"}
-        </Button>
-
-        <Button
-          fullWidth
-          sx={{ mt: 1 }}
-          onClick={() => navigate("/")}
-          color="secondary"
-        >
-          Back to Home
+          {loading ? <CircularProgress size={24} /> : "Login"}
         </Button>
       </Box>
     </Container>
   );
 };
 
-export default Register;
+export default Login;
